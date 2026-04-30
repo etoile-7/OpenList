@@ -17,8 +17,8 @@ func TestNewOSSClientUsesEnvironmentHTTPSProxy(t *testing.T) {
 
 	t.Setenv("HTTP_PROXY", "")
 	t.Setenv("http_proxy", "")
-	t.Setenv("HTTPS_PROXY", "http://127.0.0.1:7890")
 	t.Setenv("https_proxy", "")
+	t.Setenv("HTTPS_PROXY", "http://127.0.0.1:7890")
 	t.Setenv("NO_PROXY", "")
 	t.Setenv("no_proxy", "")
 
