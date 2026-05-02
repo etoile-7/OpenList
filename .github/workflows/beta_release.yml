@@ -115,12 +115,14 @@ jobs:
           go-version: "1.25.0"
 
       - name: Setup web
+        if: matrix.target != 'windows-arm64' && matrix.target != 'windows7-*'
         run: bash build.sh dev web
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           FRONTEND_REPO: ${{ vars.FRONTEND_REPO }}
 
       - name: Build
+        if: matrix.target != 'windows-arm64' && matrix.target != 'windows7-*'
         uses: OpenListTeam/cgo-actions@v1.2.2
         with:
           targets: ${{ matrix.target }}
@@ -139,6 +141,22 @@ jobs:
             github.com/OpenListTeam/OpenList/v4/internal/conf.WebVersion=rolling
         env:
           GOFLAGS: ${{ matrix.goflags }}
+
+      - name: Setup Zig without snap
+        if: matrix.target == 'windows-arm64' || matrix.target == 'windows7-*'
+        run: bash .github/scripts/setup-zig.sh
+
+      - name: Build Windows without snap
+        if: matrix.target == 'windows-arm64' || matrix.target == 'windows7-*'
+        run: |
+          if [ "${{ matrix.target }}" = "windows-arm64" ]; then
+            bash build.sh beta windows_arm64
+          else
+            bash build.sh beta windows7
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FRONTEND_REPO: ${{ vars.FRONTEND_REPO }}
 
       - name: Verify musl binaries are static
         if: matrix.musl_static == 'true'

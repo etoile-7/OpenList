@@ -626,7 +626,7 @@ for arg in "$@"; do
         buildType="$arg"
       fi
       ;;
-    docker|docker-multiplatform|linux_musl_arm|linux_musl|android|freebsd|web)
+    docker|docker-multiplatform|linux_musl_arm|linux_musl|android|freebsd|web|windows_arm64|windows7)
       if [ -z "$dockerType" ]; then
         dockerType="$arg"
       fi
@@ -650,6 +650,12 @@ if [ "$buildType" = "dev" ]; then
       BuildDockerMultiplatform
   elif [ "$dockerType" = "web" ]; then
     echo "web only"
+  elif [ "$dockerType" = "windows_arm64" ]; then
+    mkdir -p "build"
+    BuildWinArm64 ./build/"$appName"-windows-arm64.exe
+  elif [ "$dockerType" = "windows7" ]; then
+    mkdir -p "build"
+    BuildWin7 ./build/"$appName"-windows7
   else
     BuildDev
   fi
@@ -693,6 +699,12 @@ elif [ "$buildType" = "release" -o "$buildType" = "beta" ]; then
     fi
   elif [ "$dockerType" = "web" ]; then
     echo "web only"
+  elif [ "$dockerType" = "windows_arm64" ]; then
+    mkdir -p "build"
+    BuildWinArm64 ./build/"$appName"-windows-arm64.exe
+  elif [ "$dockerType" = "windows7" ]; then
+    mkdir -p "build"
+    BuildWin7 ./build/"$appName"-windows7
   else
     BuildRelease
     if [ "$useLite" = true ]; then

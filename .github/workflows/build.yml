@@ -36,12 +36,14 @@ jobs:
           go-version: "1.25.0"
 
       - name: Setup web
+        if: matrix.target != 'windows-arm64'
         run: bash build.sh dev web
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           FRONTEND_REPO: ${{ vars.FRONTEND_REPO }}
 
       - name: Build
+        if: matrix.target != 'windows-arm64'
         uses: OpenListTeam/cgo-actions@v1.2.2
         with:
           targets: ${{ matrix.target }}
@@ -57,6 +59,17 @@ jobs:
             github.com/OpenListTeam/OpenList/v4/internal/conf.Version=$tag
             github.com/OpenListTeam/OpenList/v4/internal/conf.WebVersion=rolling
           output: openlist$ext
+
+      - name: Setup Zig without snap
+        if: matrix.target == 'windows-arm64'
+        run: bash .github/scripts/setup-zig.sh
+
+      - name: Build Windows ARM64 without snap
+        if: matrix.target == 'windows-arm64'
+        run: bash build.sh dev windows_arm64
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FRONTEND_REPO: ${{ vars.FRONTEND_REPO }}
 
       - name: Verify musl binary is static
         if: contains(matrix.target, '-musl')

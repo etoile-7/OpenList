@@ -56,7 +56,7 @@ jobs:
       - name: Install dependencies
         if: matrix.target-platform == ''
         run: |
-          sudo snap install zig --classic --beta
+          bash .github/scripts/setup-zig.sh
           docker pull crazymax/xgo:latest
           go install github.com/crazy-max/xgo@latest
           sudo apt install upx
